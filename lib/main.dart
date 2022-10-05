@@ -1,161 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'people_page.dart';
+import 'widget/button_widget.dart';
+import 'widget/navigation_drawer_widget.dart';
 
-void main() {
-  runApp(MyWidget());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  runApp(MyApp());
 }
 
-class MyWidget extends StatelessWidget {
-  MyWidget({super.key});
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+class MyApp extends StatelessWidget {
+  static final String title = 'CSUN Navigation App';
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      body: SlidingUpPanel(
-        panel: Center(
-          child: Text('This is the sliding up panel'),
-        ),
-        collapsed: Container(
-            child: Center(
-          child: Text(
-            'Search Bar',
-            style: TextStyle(fontSize: 20),
+  Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: title,
+        theme: ThemeData(primarySwatch: Colors.red),
+        home: MainPage(),
+      );
+}
+
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        // drawer: NavigationDrawerWidget(),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              if (_scaffoldKey.currentState!.isDrawerOpen) {
+                _scaffoldKey.currentState!.closeDrawer();
+              } else {
+                _scaffoldKey.currentState!.openDrawer();
+              }
+            },
           ),
-        )),
-      ),
-      key: _scaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.person),
-          onPressed: () {
-            if (_scaffoldKey.currentState!.isDrawerOpen) {
-              _scaffoldKey.currentState!.closeDrawer();
-            } else {
-              _scaffoldKey.currentState!.openDrawer();
-            }
-          },
+          title: Text('CSUN Nav App'),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.red,
-        title: const Text('CSUN Navigation App'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            // UserAccountsDrawerHeader(
-            //   accountName: Text('Oscar Ibarra'),
-            //   accountEmail: Text('Oscar.ibarra.194@my.csun.edu'),
-            //   currentAccountPicture: FlutterLogo(),
-            // ),
-            DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    FlutterLogo(size: 80),
-                    Text('Oscar Ibarra'),
-                    Text('oscar.ibarra.194@my.csun.edu')
-                  ],
-                )),
-            ListTile(
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pushNamed(context, 'main.dart');
-              },
-            ),
-            ListTile(
-              title: Text('Leaderboard'),
-              onTap: () {
-                Navigator.pushNamed(context, '/Leaderboard');
-              },
-            ),
-            ListTile(
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, '/Settings');
-              },
-            ),
-          ],
-        ),
-      ),
-      endDrawer: Container(
-          width: 200,
-          child: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                const DrawerHeader(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              // UserAccountsDrawerHeader(
+              //   accountName: Text('Oscar Ibarra'),
+              //   accountEmail: Text('Oscar.ibarra.194@my.csun.edu'),
+              //   currentAccountPicture: FlutterLogo(),
+              // ),
+              DrawerHeader(
                   decoration: BoxDecoration(
                     color: Colors.red,
                   ),
-                  child: Text(
-                    'Additional Services',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                buildMenuItem(
-                  text: 'People',
-                  icon: Icons.people,
-                  onClicked: () => selectedItem(context, 0),
-                ),
-                ListTile(
-                  leading: Icon(Icons.directions_bus),
-                  title: const Text('Shuttle Bus'),
-                  onTap: () {
-                    // Update the state of the app.
-                    // ...
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.directions_walk),
-                  title: const Text('Saftey Escort'),
-                  onTap: () {
-                    // Update the state of the app.
-                    // ...
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.local_police),
-                  title: const Text('Security'),
-                  onTap: () {
-                    // Update the state of the app.
-                    // ...
-                  },
-                ),
-              ],
-            ),
-          )),
-    ));
-  }
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      FlutterLogo(size: 80),
+                      Text('Oscar Ibarra'),
+                      Text('oscar.ibarra.194@my.csun.edu')
+                    ],
+                  )),
+              ListTile(
+                title: Text('Home'),
+                onTap: () {
+                  Navigator.pushNamed(context, 'main.dart');
+                },
+              ),
+              ListTile(
+                title: Text('Leaderboard'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/Leaderboard');
+                },
+              ),
+              ListTile(
+                title: Text('Settings'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/Settings');
+                },
+              ),
+            ],
+          ),
+        ),
+        endDrawer: NavigationDrawerWidget(),
 
-  Widget buildMenuItem({
-    required String text,
-    required IconData icon,
-    VoidCallback? onClicked,
-  }) {
-    final color = Colors.red;
-    final hoverColor = Colors.white;
+        body: SlidingUpPanel(
+          panel: Center(),
+          header: Container(
+              width: 400,
+              height: 100,
+              child: Center(
+                child: buildSearchField(),
+              )),
+        ),
+      );
 
-    return ListTile(
-      leading: Icon(icon, color: color),
-      title: Text(text, style: TextStyle(color: color)),
-      hoverColor: hoverColor,
-      onTap: onClicked,
+  Widget buildSearchField() {
+    final color = Colors.black;
+
+    return SizedBox(
+      width: 300,
+      child: TextField(
+        style: TextStyle(color: color),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          hintText: 'Search',
+          hintStyle: TextStyle(color: color),
+          prefixIcon: Icon(Icons.search, color: color),
+          filled: true,
+          fillColor: Colors.white12,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: color.withOpacity(0.7)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: color.withOpacity(0.7)),
+          ),
+        ),
+      ),
     );
-  }
-}
-
-void selectedItem(BuildContext context, int index) {
-  switch (index) {
-    case 0:
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PeoplePage(),
-      ));
-      break;
   }
 }
