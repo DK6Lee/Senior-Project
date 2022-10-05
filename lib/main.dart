@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'widget/button_widget.dart';
+//import 'package:sliding_up_panel/sliding_up_panel.dart';
+//import 'widget/button_widget.dart';
 import 'widget/navigation_drawer_widget.dart';
+
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,120 +17,121 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
-  static final String title = 'CSUN Navigation App';
+  // const MyApp({super.key});
 
+  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: title,
-        theme: ThemeData(primarySwatch: Colors.red),
-        home: MainPage(),
-      );
+    debugShowCheckedModeBanner: false,
+    title: 'CSUN Navigation App',
+    theme: ThemeData(primarySwatch: Colors.red),
+    home: const MyHomePage(title: 'CSUN Navigation App'),
+  );
 }
 
-class MainPage extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
   @override
-  _MainPageState createState() => _MainPageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MainPageState extends State<MainPage> {
+
+class _MyHomePageState extends State<MyHomePage> {
+  late GoogleMapController mapController;
+
+  final LatLng _center = const LatLng(34.24138, -118.52946);
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        // drawer: NavigationDrawerWidget(),
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              if (_scaffoldKey.currentState!.isDrawerOpen) {
-                _scaffoldKey.currentState!.closeDrawer();
-              } else {
-                _scaffoldKey.currentState!.openDrawer();
-              }
-            },
-          ),
-          title: Text('CSUN Nav App'),
-          backgroundColor: Colors.red,
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              // UserAccountsDrawerHeader(
-              //   accountName: Text('Oscar Ibarra'),
-              //   accountEmail: Text('Oscar.ibarra.194@my.csun.edu'),
-              //   currentAccountPicture: FlutterLogo(),
-              // ),
-              DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      FlutterLogo(size: 80),
-                      Text('Oscar Ibarra'),
-                      Text('oscar.ibarra.194@my.csun.edu')
-                    ],
-                  )),
-              ListTile(
-                title: Text('Home'),
-                onTap: () {
-                  Navigator.pushNamed(context, 'main.dart');
-                },
-              ),
-              ListTile(
-                title: Text('Leaderboard'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/Leaderboard');
-                },
-              ),
-              ListTile(
-                title: Text('Settings'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/Settings');
-                },
-              ),
-            ],
-          ),
-        ),
-        endDrawer: NavigationDrawerWidget(),
-
-        body: SlidingUpPanel(
-          panel: Center(),
-          header: Container(
-              width: 400,
-              height: 100,
-              child: Center(
-                child: buildSearchField(),
-              )),
-        ),
-      );
-
-  Widget buildSearchField() {
-    final color = Colors.black;
-
-    return SizedBox(
-      width: 300,
-      child: TextField(
-        style: TextStyle(color: color),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          hintText: 'Search',
-          hintStyle: TextStyle(color: color),
-          prefixIcon: Icon(Icons.search, color: color),
-          filled: true,
-          fillColor: Colors.white12,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: color.withOpacity(0.7)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: color.withOpacity(0.7)),
-          ),
+  /* Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: Colors.red.withOpacity(1.0),
+      ),
+      body: GoogleMap(
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 15.0,
         ),
       ),
     );
   }
+  */
+
+  Widget build(BuildContext context) => Scaffold(
+    // drawer: NavigationDrawerWidget(),
+
+    appBar: AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.person),
+        onPressed: (){
+          if(_scaffoldKey.currentState!.isDrawerOpen){
+            _scaffoldKey.currentState!.closeDrawer();
+          }
+          else{
+            _scaffoldKey.currentState!.openDrawer();
+          }
+        },
+        ),
+        title: Text(widget.title),
+        backgroundColor: Colors.red,
+    ),
+    drawer: Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.red,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                FlutterLogo(size: 80),
+                Text('Oscar Ibarra'),
+                Text('oscar.ibarra.194@my.csun.edu'),
+              ],
+              )
+            ),
+            ListTile(
+              title: Text('Home'),
+              onTap: (){
+                Navigator.pushNamed(context, 'main.dart');
+              },
+              ),
+            ListTile(
+              title: Text('Leaderboard'),
+              onTap: () {
+                Navigator.pushNamed(context, '/Leaderboard');
+              },
+            ),
+            ListTile(
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pushNamed(context, '/Settings');
+              },
+            ),
+        ],
+        ),
+    ),
+    endDrawer: NavigationDrawerWidget(),
+
+    body: GoogleMap(
+      onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 15.0,
+        ),
+    ),
+  );
 }
